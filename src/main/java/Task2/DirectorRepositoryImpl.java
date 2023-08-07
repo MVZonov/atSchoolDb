@@ -63,10 +63,8 @@ public class DirectorRepositoryImpl implements DirectorRepository {
         List<Director> directors = new ArrayList<>();
 
         try {
-            // Создаем SQL запрос
             String sql = "SELECT * FROM Directors d INNER JOIN Movies m ON d.id = m.director WHERE m.genre IN (";
 
-            // Добавляем параметр для каждого жанра из списка
             for (int i = 0; i < genres.size(); i++) {
                 sql += "?";
                 if (i != genres.size() - 1) {
@@ -76,24 +74,19 @@ public class DirectorRepositoryImpl implements DirectorRepository {
 
             sql += ")";
 
-            // Создаем PreparedStatement
             PreparedStatement statement = connection.prepareStatement(sql);
 
-            // Устанавливаем значения параметров
             for (int i = 0; i < genres.size(); i++) {
                 statement.setString(i + 1, genres.get(i));
             }
 
-            // Выполняем запрос и получаем результат
             ResultSet rs = statement.executeQuery();
 
-            // Обрабатываем результат
             while (rs.next()) {
                 Director director = new Director(rs);
                 directors.add(director);
             }
 
-            // Закрываем ресурсы
             rs.close();
             statement.close();
         } catch (SQLException e) {
